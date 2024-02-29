@@ -13,19 +13,18 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
+        src/main.cpp
+        src/mainwindow.cpp
+        src/mainwindow.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(CompareAndEvaluate
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        fullscreenwindow.h fullscreenwindow.cpp
-        fullscreentest.h fullscreentest.cpp
-        testmanager.h testmanager.cpp
-        yaml/api.c yaml/dumper.c yaml/emitter.c yaml/loader.c yaml/parser.c yaml/reader.c yaml/scanner.c yaml/writer.c yaml/yaml.h yaml/yaml_private.h
+        src/fullscreenwindow.h src/fullscreenwindow.cpp
+        src/fullscreentest.h src/fullscreentest.cpp
+        src/testmanager.h src/testmanager.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET CompareAndEvaluate APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
