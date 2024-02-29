@@ -3,7 +3,6 @@
 
 #include <filesystem>
 #include <string>
-#include "yaml/yaml.h"
 
 using namespace std;
 

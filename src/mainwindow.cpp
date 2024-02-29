@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QLabel>
 #include "fullscreenwindow.h"
+#include "fullscreentest.h"
 
 MainWindow::MainWindow(QWidget *parent) : QDialog(parent) {
     configLineEdit = new QLineEdit(this);
@@ -11,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent) {
     browseButton = new QPushButton("Browse", this);
     beginButton = new QPushButton("Done", this);
     cancelButton = new QPushButton("Cancel", this);
-    fullScreenWindow = new FullScreenWindow(this);
+    fullscreentest = new FullScreenTest(this);
 
     connect(browseButton, &QPushButton::clicked, this, &MainWindow::browseDirectory);
     connect(beginButton, &QPushButton::clicked, this, &MainWindow::begin);
@@ -47,7 +48,7 @@ void MainWindow::begin() {
     qDebug() << "Project Name:" << projectName;
 
     accept(); // Close the dialog
-    fullScreenWindow->showFullScreen();
+    fullscreentest->showFullScreen();
 }
 
 void MainWindow::cancel() {

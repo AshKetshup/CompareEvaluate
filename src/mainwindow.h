@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include "fullscreenwindow.h"
+#include "fullscreentest.h"
 
 class MainWindow : public QDialog
 {
@@ -26,6 +27,8 @@ private:
     QPushButton *beginButton;
     QPushButton *cancelButton;
     FullScreenWindow *fullScreenWindow;
+    FullScreenTest *fullscreentest;
+
 };
 
 #endif // MAINWINDOW_H
