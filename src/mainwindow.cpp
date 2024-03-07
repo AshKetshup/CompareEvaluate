@@ -5,19 +5,21 @@
 #include <QLabel>
 #include "fullscreenwindow.h"
 
+#include "testmanager.h"
+
 MainWindow::MainWindow(QWidget *parent) : QDialog(parent) {
-    configLineEdit = new QLineEdit(this);
+    configLineEdit      = new QLineEdit(this);
     projectNameLineEdit = new QLineEdit(this);
-    browseButton = new QPushButton("Browse", this);
-    beginButton = new QPushButton("Done", this);
-    cancelButton = new QPushButton("Cancel", this);
-    fullScreenWindow = new FullScreenWindow(this);
+    browseButton        = new QPushButton("Browse", this);
+    beginButton         = new QPushButton("Done"  , this);
+    cancelButton        = new QPushButton("Cancel", this);
+    fullScreenWindow    = new FullScreenWindow(this);
 
     connect(browseButton, &QPushButton::clicked, this, &MainWindow::browseDirectory);
-    connect(beginButton, &QPushButton::clicked, this, &MainWindow::begin);
+    connect(beginButton , &QPushButton::clicked, this, &MainWindow::begin);
     connect(cancelButton, &QPushButton::clicked, this, &MainWindow::cancel);
 
-    QGridLayout *layout = new QGridLayout(this);
+    QGridLayout* layout = new QGridLayout(this);
     layout->addWidget(new QLabel("Config File: (*.toml)"), 0, 0);
     layout->addWidget(configLineEdit, 0, 1);
     layout->addWidget(browseButton, 0, 2);
@@ -29,9 +31,7 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent) {
     setLayout(layout);
 }
 
-MainWindow::~MainWindow() {
-
-}
+MainWindow::~MainWindow() { }
 
 void MainWindow::browseDirectory() {
     QString file = QFileDialog::getOpenFileName(this, tr("Select a Config File"), QDir::homePath());
@@ -45,6 +45,8 @@ void MainWindow::begin() {
 
     qDebug() << "Config File:" << configFile;
     qDebug() << "Project Name:" << projectName;
+
+    TestManager();
 
     accept(); // Close the dialog
     fullScreenWindow->showFullScreen();
