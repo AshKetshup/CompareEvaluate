@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QDialog(parent) {
 MainWindow::~MainWindow() { }
 
 void MainWindow::browseDirectory() {
-    QString file = QFileDialog::getOpenFileName(this, tr("Select a Config File"), QDir::homePath());
+    QString file = QFileDialog::getOpenFileName(this, tr("Select a Config File"), QDir::currentPath());
     if (!file.isEmpty())
         configLineEdit->setText(file);
 }
@@ -46,7 +46,7 @@ void MainWindow::begin() {
     qDebug() << "Config File:" << configFile;
     qDebug() << "Project Name:" << projectName;
 
-    TestManager();
+    TestManager(projectName.toStdString(), fs::path(configFile.toStdString()));
 
     accept(); // Close the dialog
     fullScreenWindow->showFullScreen();
