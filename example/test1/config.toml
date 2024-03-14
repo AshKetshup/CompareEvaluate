@@ -1,7 +1,0 @@
-[CONFIG]
-directories = [
-    "./original",
-    "./jpeg2000",
-    "./jpeg",
-    "./hevc"
-]
