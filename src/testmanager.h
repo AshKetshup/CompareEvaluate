@@ -27,6 +27,13 @@ class TestManager {
         TestManager(string name, fs::path configPath);
         TestManager(fs::path configPath);
 
+        string getTestName();
+        filesystem::path getTestConfigFile();
+        unordered_map<string, vector<fs::path>> getTableFiles();
+        vector<Test> getQueue();
+        void appendQueue(Test);
+
+
     private:
         string testName;
         filesystem::path testConfigFile;
@@ -37,6 +44,7 @@ class TestManager {
         void loadDirectory(fs::path dirPath);
         void generateQueue();
         void combinations(vector<fs::path> arr, pair<fs::path, fs::path> aux, int start, int end, int index);
+
 };
 
 #endif // TESTMANAGER_H

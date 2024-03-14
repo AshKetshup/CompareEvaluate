@@ -2,32 +2,52 @@
 
 #include <iostream>
 #include <random>
+#include <QDebug>
 
 #include "toml.hpp"
 
 TestManager::TestManager(string name, fs::path configPath) :
     testName(name), testConfigFile(configPath) {
-
-    if (!loadConfigFile())
+    qDebug() << "gonna construct";
+    if (!loadConfigFile()){
+        qDebug() << "it blew up";
         throw TestManagerException("TOML parser, wasn't able to parse given file");
+        qDebug() << "it blew up properly";
+    }
+
 }
 
 bool TestManager::loadConfigFile() {
     try {
+
         toml::table config = toml::parse_file(testConfigFile.c_str());
-        auto arrPaths = config["directories"].as_array();
 
-        for (size_t i = 0; i < arrPaths->max_size(); i++) {
-            const char* x = arrPaths->get(i)->value<string>()->c_str();
-
-            loadDirectory(fs::path(x));
+        auto arrPaths = config["CONFIG"]["directories"].as_array();
+        if (!arrPaths) {
+            qDebug() << "something went wrong";
         }
 
+        qDebug() << "arr paths:" << arrPaths;
+        for (size_t i = 0; i < arrPaths->max_size(); i++) {
+            qDebug() << "gonna... do some weird thing";
+            qDebug() << "path1" << arrPaths->get(i)->value<string>()->c_str();
+            std::string x = arrPaths->get(i)->value<string>()->c_str();
+            qDebug() << "x = " << x;
+            fs::path x2 = testConfigFile.parent_path()/fs::path(x);
+            qDebug() << "diretoria:" << x2.string();
+            loadDirectory(x2);
+        }
+        qDebug() << "managed to load";
+
     } catch (const toml::parse_error& err) {
+        qDebug() << "fucked up loading";
         cerr << "Error parsing file '" << *err.source().path << "':\n"
              << err.description() << "\n (" << err.source().begin << ")\n";
 
         return false;
+    }
+    catch (exception e){
+        qDebug() << "error:" << e.what();
     }
 
     return true;
@@ -36,13 +56,18 @@ bool TestManager::loadConfigFile() {
 
 
 void TestManager::loadDirectory(fs::path dirPath) {
-    cout << "Childs of directory '" << dirPath << "'\n";
+    qDebug() << "Childs of directory '" << dirPath.string() << "'\n";
     for (fs::directory_entry child : fs::directory_iterator(dirPath)) {
-        if (!fs::is_regular_file(child))
+        std::cout << child.path().string() << "\n";
+
+        if (!fs::is_regular_file(child)){
+            qDebug() << "bad stuff happen D:";
             continue;
+        }
+
 
         string fileName = child.path().filename().string();
-        cout << "\t" << fileName << "\n";
+        qDebug() << "nome:" << fileName << "\n";
 
         // Inserts pair {fileName, root_path} to tableFiles:
         // 1. Certificates that there is at least an empty vector
@@ -51,6 +76,7 @@ void TestManager::loadDirectory(fs::path dirPath) {
         // 2. Gets the vector by reference and pushes back the root_path
         vector<fs::path>& paths = tableFiles.at(fileName);
         paths.push_back(child.path().root_path());
+
     }
 }
 
@@ -105,4 +131,26 @@ void TestManager::combinations(vector<fs::path> arr, pair<fs::path, fs::path> au
     }
 }
 
-char *TestManagerException::what() { return message; }
+const char* TestManagerException::what() const {
+    return message.c_str();
+}
+
+string TestManager::getTestName(){
+    return this->testName;
+}
+
+filesystem::path TestManager::getTestConfigFile(){
+    return this->testConfigFile;
+}
+
+unordered_map<string, vector<fs::path>> TestManager::getTableFiles(){
+    return this->tableFiles;
+}
+
+vector<Test> TestManager::getQueue() {
+    return this->queue;
+}
+void TestManager::appendQueue(Test t){
+    this->queue.push_back(t);
+}
+
