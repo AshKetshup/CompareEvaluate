@@ -76,6 +76,7 @@ void TestManager::loadDirectory(fs::path dirPath) {
         // 2. Gets the vector by reference and pushes back the root_path
         vector<fs::path>& paths = tableFiles.at(fileName);
         paths.push_back(child.path().root_path());
+
     }
 }
 
@@ -133,3 +134,23 @@ void TestManager::combinations(vector<fs::path> arr, pair<fs::path, fs::path> au
 const char* TestManagerException::what() const {
     return message.c_str();
 }
+
+string TestManager::getTestName(){
+    return this->testName;
+}
+
+filesystem::path TestManager::getTestConfigFile(){
+    return this->testConfigFile;
+}
+
+unordered_map<string, vector<fs::path>> TestManager::getTableFiles(){
+    return this->tableFiles;
+}
+
+vector<Test> TestManager::getQueue() {
+    return this->queue;
+}
+void TestManager::appendQueue(Test t){
+    this->queue.push_back(t);
+}
+
