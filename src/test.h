@@ -10,6 +10,10 @@ class Test {
 public:
     Test(filesystem::path, filesystem::path);
     Test(filesystem::path, filesystem::path, string);
+    void setResult(int result);
+    string toString();
+
+
 private:
     string name;
     pair<filesystem::path, filesystem::path> images;

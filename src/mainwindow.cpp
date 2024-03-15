@@ -46,7 +46,7 @@ void MainWindow::begin() {
     qDebug() << "Config File:" << configFile;
     qDebug() << "Project Name:" << projectName;
 
-    TestManager(projectName.toStdString(), fs::path(configFile.toStdString()));
+    TestManager::initTestManager(projectName.toStdString(), fs::path(configFile.toStdString()));
 
     accept(); // Close the dialog
     fullScreenWindow->showFullScreen();
