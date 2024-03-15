@@ -17,8 +17,13 @@ void TestManager::initTestManager(string name, fs::path configPath) {
     TestManager::testName = name;
     TestManager::testConfigFile = configPath;
 
-    if ( !loadConfigFile() )
+
+    bool successLoading = loadConfigFile();
+    qDebug() << "Success Loading TOML: " << successLoading;
+    if ( !successLoading )
         throw TestManagerException(TestManagerException::TOML_EXCEPTION_ERROR);
+
+    TestManager::generateQueue();
 }
 
 void TestManager::initTestManager(fs::path configPath) { initTestManager("", configPath); }
@@ -33,7 +38,7 @@ bool TestManager::loadConfigFile() {
         if (!arrPaths)
             throw ReadException(ReadException::READ_EXCEPTION_ERROR);
 
-        for (size_t i = 0; i < arrPaths->max_size(); i++) {
+        for (size_t i = 0; i < arrPaths->size(); i++) {
             fs::path readDirectory(arrPaths->get(i)->value<string>()->c_str());
 
             qDebug() << "Read directory" << readDirectory.string();
@@ -42,34 +47,42 @@ bool TestManager::loadConfigFile() {
                 ? testConfigFile.parent_path()/readDirectory
                 : readDirectory;
 
-            qDebug() << "Complete Directory: " << fullDir.string();
+            qDebug() << "Complete Directory: " << fullDir.string() << "\n";
 
             loadDirectory(fullDir);
         }
 
     } catch (const toml::parse_error& err) {
-        cerr << "TomlParseError: Error parsing file '" << *err.source().path << "':\n\t"
-             << err.description() << "\n\t(" << err.source().begin << ")\n";
+        qCritical() << "TomlParseError: Error parsing file '" << err.source().path->c_str() << "':\n\t"
+             << err.description() << "\n\t(" << err.source().begin.column << " cl " << err.source().begin.line << " ln )\n";
 
         returnValue = false;
-    } catch (const ReadException& err){
-        cerr << "ReadException: " << err.what() << "\n";
+    } catch (const ReadException& err) {
+        qCritical() << "ReadException: " << err.what() << "\n";
+
+        returnValue = false;
+    } catch (const exception& err) {
+        qCritical() << "EXCEPTION NOT COVERED: " << err.what() << "\n";
 
         returnValue = false;
     }
 
+
+    qDebug() << "[DONE]";
     return returnValue;
 }
 
 void TestManager::loadDirectory(fs::path dirPath) {
-    qDebug() << "Loading Directory Files from: '" << dirPath.string() << "'\n";
+    qDebug() << "\nLoading Directory Files from: '" << dirPath.string();
 
-    for (fs::directory_entry child : fs::directory_iterator(dirPath)) {
+    fs::directory_iterator iterator(dirPath);
+
+    for (auto& child : iterator) {
         if (!fs::is_regular_file(child))
             continue;
 
         string fileName = child.path().filename().string();
-        qDebug() << " - " << fileName << "\n";
+        qDebug() << " - " << fileName;
 
         // Inserts pair {fileName, root_path} to tableFiles:
         // 1. Certificates that there is at least an empty vector
@@ -79,6 +92,8 @@ void TestManager::loadDirectory(fs::path dirPath) {
         vector<fs::path>& paths = tableFiles.at(fileName);
         paths.push_back(child.path().root_path());
     }
+
+    qDebug() << "[DONE]";
 }
 
 
