@@ -6,12 +6,17 @@
 #include <QVBoxLayout>
 #include <QKeyEvent>
 
+#include "testmanager.h"
+
 
 class FullScreenTest : public QDialog {
     Q_OBJECT
+
 public:
     explicit FullScreenTest(QWidget *parent = nullptr);
     ~FullScreenTest();
+
+    void showImages();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -21,8 +26,6 @@ private:
     QLabel *rightImageLabel;
     QPixmap leftPixmap;
     QPixmap rightPixmap;
-
-    void showImages();
 };
 
 #endif // FULLSCREENTEST_H

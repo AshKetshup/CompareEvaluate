@@ -6,8 +6,9 @@
 #include <QVBoxLayout>
 #include <QKeyEvent>
 
-class FullScreenWindow : public QDialog
-{
+#include "fullscreentest.h"
+
+class FullScreenWindow : public QDialog {
     Q_OBJECT
 
 public:
@@ -19,6 +20,7 @@ protected:
 
 private:
     QLabel *messageLabel;
+    FullScreenTest *fullScreenTest;
 };
 
 #endif // FULLSCREENWINDOW_H

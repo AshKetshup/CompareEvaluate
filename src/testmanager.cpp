@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <random>
+#include <chrono>
 #include <QDebug>
 
 #include "toml.hpp"
@@ -12,6 +13,7 @@
  * Initializes TestManager staticly
  */
 void TestManager::initTestManager(string name, fs::path configPath) {
+    // No Tab
     qDebug() << "Initializes TestManager";
 
     TestManager::testName = name;
@@ -29,6 +31,10 @@ void TestManager::initTestManager(string name, fs::path configPath) {
 void TestManager::initTestManager(fs::path configPath) { initTestManager("", configPath); }
 
 bool TestManager::loadConfigFile() {
+    // 1 Tab
+
+    qDebug() << "\n\tLoads Config File:";
+
     bool returnValue = true;
 
     try {
@@ -53,27 +59,28 @@ bool TestManager::loadConfigFile() {
         }
 
     } catch (const toml::parse_error& err) {
-        qCritical() << "TomlParseError: Error parsing file '" << err.source().path->c_str() << "':\n\t"
-             << err.description() << "\n\t(" << err.source().begin.column << " cl " << err.source().begin.line << " ln )\n";
+        qCritical() << "\tTomlParseError: Error parsing file '" << err.source().path->c_str() << "':\n\t\t"
+             << err.description() << "\n(" << err.source().begin.column << " cl " << err.source().begin.line << " ln )\n";
 
         returnValue = false;
     } catch (const ReadException& err) {
-        qCritical() << "ReadException: " << err.what() << "\n";
+        qCritical() << "\tReadException: " << err.what() << "\n";
 
         returnValue = false;
     } catch (const exception& err) {
-        qCritical() << "EXCEPTION NOT COVERED: " << err.what() << "\n";
+        qCritical() << "\tEXCEPTION NOT COVERED: " << err.what() << "\n";
 
         returnValue = false;
     }
 
 
-    qDebug() << "[DONE]";
+    qDebug() << "\t[DONE]";
     return returnValue;
 }
 
 void TestManager::loadDirectory(fs::path dirPath) {
-    qDebug() << "\nLoading Directory Files from: '" << dirPath.string();
+    // 2 Tabs
+    qDebug() << "\n\t\tLoading Directory Files from: '" << dirPath.string();
 
     fs::directory_iterator iterator(dirPath);
 
@@ -82,7 +89,7 @@ void TestManager::loadDirectory(fs::path dirPath) {
             continue;
 
         string fileName = child.path().filename().string();
-        qDebug() << " - " << fileName;
+        qDebug() << "\t\t - " << fileName;
 
         // Inserts pair {fileName, root_path} to tableFiles:
         // 1. Certificates that there is at least an empty vector
@@ -90,10 +97,10 @@ void TestManager::loadDirectory(fs::path dirPath) {
 
         // 2. Gets the vector by reference and pushes back the root_path
         vector<fs::path>& paths = tableFiles.at(fileName);
-        paths.push_back(child.path().root_path());
+        paths.push_back(child.path());
     }
 
-    qDebug() << "[DONE]";
+    qDebug() << "\t\t[DONE]";
 }
 
 
@@ -106,14 +113,18 @@ void TestManager::loadDirectory(fs::path dirPath) {
  *  2. randomize queue
 */
 void TestManager::generateQueue() {
-    qDebug() << "Generates Queue from Table ... ";
+    qDebug() << "\n\tGenerates Queue from Table ... ";
 
-    qDebug() << "Creates all possible combos ...";
+    qDebug() << "\tCreates all possible combos ...";
     for ( const auto& myPair : tableFiles )
-        combinations( myPair.second, pair<fs::path, fs::path>(), 0, myPair.second.size()-1, 0);
+        combinations( myPair.second, pair<fs::path, fs::path>(), 0, myPair.second.size() - 1, 0 );
 
-    qDebug() << "Shuffles queue order\n";
-    shuffle(queue.begin(), queue.end(), random_device());
+    qDebug() << "\tShuffles queue order";
+
+    std::random_device rDevice;
+    std::mt19937 generator(rDevice());
+    generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
+    shuffle(queue.begin(), queue.end(), generator);
 
     qDebug() << "\t[DONE]";
 }

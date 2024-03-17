@@ -13,9 +13,6 @@ FullScreenTest::FullScreenTest(QWidget *parent) : QDialog(parent) {
     layout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(layout);
-
-    leftPixmap.load("");
-    rightPixmap.load("");
 }
 
 
@@ -31,3 +28,13 @@ void FullScreenTest::keyPressEvent(QKeyEvent *event) {
     }
 }
 
+void FullScreenTest::showImages() {
+    string left = TestManager::getCurrentTest().getFirst().string();
+    string right = TestManager::getCurrentTest().getSecond().string();
+
+    qDebug() << "LEFT : " << left.c_str() ;
+    qDebug() << "RIGHT: " << right.c_str();
+
+    leftImageLabel->setPixmap( QPixmap(left.c_str()) );
+    rightImageLabel->setPixmap( QPixmap(right.c_str()) );
+}

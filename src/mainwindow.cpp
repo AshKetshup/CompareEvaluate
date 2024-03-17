@@ -10,9 +10,11 @@
 MainWindow::MainWindow(QWidget *parent) : QDialog(parent) {
     configLineEdit      = new QLineEdit(this);
     projectNameLineEdit = new QLineEdit(this);
+
     browseButton        = new QPushButton("Browse", this);
     beginButton         = new QPushButton("Done"  , this);
     cancelButton        = new QPushButton("Cancel", this);
+
     fullScreenWindow    = new FullScreenWindow(this);
 
     connect(browseButton, &QPushButton::clicked, this, &MainWindow::browseDirectory);
@@ -46,7 +48,13 @@ void MainWindow::begin() {
     qDebug() << "Config File:" << configFile;
     qDebug() << "Project Name:" << projectName;
 
-    TestManager::initTestManager(projectName.toStdString(), fs::path(configFile.toStdString()));
+    TestManager::initTestManager(
+        projectName.toStdString(),
+        fs::path(configFile.toStdString())
+    );
+
+    for (Test& p: TestManager::getQueue())
+        qDebug() << p.toString();
 
     accept(); // Close the dialog
     fullScreenWindow->showFullScreen();
