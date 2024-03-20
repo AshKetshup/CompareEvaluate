@@ -28,6 +28,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         src/fullscreenwindow.h src/fullscreenwindow.cpp
         src/fullscreentest.h src/fullscreentest.cpp
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET CompareAndEvaluate APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
